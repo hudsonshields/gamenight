@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(/usr/local/bin/npm install *)",
+      "Read(//opt/homebrew/bin/**)",
+      "Read(//Users/hudson/.nvm/**)",
+      "Bash(command -v npm)",
+      "Bash(ls /usr/local/bin/ | grep -i node; ls /opt/homebrew/bin/ | grep -i node; find /Users/hudson -name \"npm\" -maxdepth 5 2>/dev/null | head -5)",
+      "Bash(brew --version)",
+      "Bash(brew install *)",
+      "Bash(npm -v)",
+      "Bash(node server.js)",
+      "Bash(curl -s http://localhost:3000/)",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "Bash(git -C /Users/hudson/Desktop/GAMES status)",
+      "Bash(git config *)",
+      "Bash(gh --version)"
+    ]
+  }
+}

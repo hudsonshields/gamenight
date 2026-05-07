@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🎮 GameNight</title>
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body>
+  <div class="lobby-wrap">
+    <header class="lobby-header">
+      <h1>🎮 GameNight</h1>
+      <p class="tagline">Mini-games for two ♥</p>
+    </header>
+
+    <!-- Join Room -->
+    <div class="join-bar">
+      <input id="joinInput" type="text" placeholder="Enter room code…" maxlength="6" autocomplete="off" spellcheck="false" />
+      <button id="joinBtn" onclick="joinRoom()">Join Room</button>
+    </div>
+    <p id="joinError" class="error-msg" style="display:none"></p>
+
+    <!-- Game Grid -->
+    <h2 class="section-title">Choose a Game</h2>
+    <div class="game-grid">
+
+      <div class="game-card" style="--accent:#ff6b6b">
+        <div class="card-icon">🔴</div>
+        <div class="card-body">
+          <h3>Connect Four</h3>
+          <p>Drop discs, connect 4 in a row before your opponent!</p>
+          <button onclick="createRoom('connect-four')">Create Room</button>
+        </div>
+      </div>
+
+      <div class="game-card" style="--accent:#6bcb77">
+        <div class="card-icon">❌</div>
+        <div class="card-body">
+          <h3>Tic-Tac-Toe</h3>
+          <p>Classic X vs O — 3 in a row wins. Quick and fun!</p>
+          <button onclick="createRoom('tictactoe')">Create Room</button>
+        </div>
+      </div>
+
+      <div class="game-card" style="--accent:#4d96ff">
+        <div class="card-icon">🚢</div>
+        <div class="card-body">
+          <h3>Battleship</h3>
+          <p>Place your fleet and sink the enemy ships!</p>
+          <button onclick="createRoom('battleship')">Create Room</button>
+        </div>
+      </div>
+
+      <div class="game-card" style="--accent:#ff6bcb">
+        <div class="card-icon">🔤</div>
+        <div class="card-body">
+          <h3>Word Scramble</h3>
+          <p>Race to unscramble the word first — 5 rounds!</p>
+          <button onclick="createRoom('word-scramble')">Create Room</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/js/lobby.js"></script>
+</body>
+</html>
