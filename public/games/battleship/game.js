@@ -111,10 +111,13 @@ function renderShipsList() {
   });
 }
 
-function renderPlacementGrid(hoverR = -1, hoverC = -1) {
+let _hoveredCells = [];
+
+function renderPlacementGrid() {
   const grid = document.getElementById('placementGrid');
   grid.innerHTML = '';
-  // Build placed cells map
+
+  // Build placed-cells map
   const cellMap = Array(10).fill(null).map(() => Array(10).fill(null));
   placedShips.forEach((s, idx) => {
     if (!s) return;
@@ -125,39 +128,47 @@ function renderPlacementGrid(hoverR = -1, hoverC = -1) {
     }
   });
 
-  // Hover preview
-  const previewCells = new Set();
-  const previewValid = canPlace(selectedShip, hoverR, hoverC, orientation === 'horizontal');
-  if (hoverR >= 0 && !placedShips[selectedShip]) {
-    const hor = orientation === 'horizontal';
-    for (let j = 0; j < SHIP_SIZES[selectedShip]; j++) {
-      const r = hor ? hoverR : hoverR + j;
-      const c = hor ? hoverC + j : hoverC;
-      if (r < 10 && c < 10) previewCells.add(`${r},${c}`);
-    }
-  }
-
   for (let r = 0; r < 10; r++) {
     for (let c = 0; c < 10; c++) {
       const cell = document.createElement('div');
       cell.className = 'bs-cell';
-      const key = `${r},${c}`;
+      cell.dataset.row = r;
+      cell.dataset.col = c;
+      if (cellMap[r][c] !== null) cell.classList.add('ship');
 
-      if (cellMap[r][c] !== null) {
-        cell.classList.add('ship');
-      } else if (previewCells.has(key)) {
-        cell.style.background = previewValid
-          ? 'rgba(107,203,119,.4)' : 'rgba(255,77,77,.4)';
-      }
-
-      cell.addEventListener('mouseover', () => renderPlacementGrid(r, c));
-      cell.addEventListener('mouseleave', () => {
-        if (r === hoverR && c === hoverC) renderPlacementGrid();
-      });
+      // Stable event listeners — no re-render on hover
+      cell.addEventListener('mouseenter', () => showShipPreview(r, c));
       cell.addEventListener('click', () => placeShipAt(r, c));
       grid.appendChild(cell);
     }
   }
+  grid.addEventListener('mouseleave', clearShipPreview);
+}
+
+function showShipPreview(row, col) {
+  clearShipPreview();
+  if (placedShips[selectedShip]) return; // already placed
+
+  const hor = orientation === 'horizontal';
+  const valid = canPlace(selectedShip, row, col, hor);
+  const size = SHIP_SIZES[selectedShip];
+  const grid = document.getElementById('placementGrid');
+
+  for (let j = 0; j < size; j++) {
+    const r = hor ? row : row + j;
+    const c = hor ? col + j : col;
+    if (r >= 10 || c >= 10) continue;
+    const cell = grid.querySelector(`[data-row="${r}"][data-col="${c}"]`);
+    if (cell && !cell.classList.contains('ship')) {
+      cell.style.background = valid ? 'rgba(107,203,119,.4)' : 'rgba(255,77,77,.4)';
+      _hoveredCells.push(cell);
+    }
+  }
+}
+
+function clearShipPreview() {
+  _hoveredCells.forEach(c => c.style.background = '');
+  _hoveredCells = [];
 }
 
 function canPlace(shipIdx, row, col, horizontal) {

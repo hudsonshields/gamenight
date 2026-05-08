@@ -15,7 +15,14 @@
       "mcp__Claude_in_Chrome__tabs_context_mcp",
       "Bash(git -C /Users/hudson/Desktop/GAMES status)",
       "Bash(git config *)",
-      "Bash(gh --version)"
+      "Bash(gh --version)",
+      "Bash(node -c server.js)",
+      "Bash(node -c games/eightBall.js)",
+      "Bash(node -c games/battleship.js)",
+      "Bash(curl -s -X POST http://localhost:3000/api/create-room -H \"Content-Type: application/json\" -d '{\"gameType\":\"8ball\"}')",
+      "Bash(curl -s http://localhost:3000/games/8ball/)",
+      "Bash(mkdir -p /Users/hudson/Desktop/GAMES/.claude)",
+      "mcp__Claude_Preview__preview_start"
     ]
   }
 }

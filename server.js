@@ -15,6 +15,7 @@ const games = {
   'tictactoe':    require('./games/tictactoe'),
   'battleship':   require('./games/battleship'),
   'word-scramble': require('./games/wordScramble'),
+  '8ball':         require('./games/eightBall'),
 };
 
 const rooms = {};
@@ -135,6 +136,40 @@ io.on('connection', (socket) => {
     } else {
       socket.to(room.code).emit('opponent-placed');
     }
+  });
+
+  // ── 8-Ball Pool events ──
+  socket.on('take-shot', ({ angle, power }) => {
+    const room = rooms[socket.roomCode];
+    if (!room || room.gameType !== '8ball' || !room.state) return;
+    if (room.state.currentPlayer !== socket.playerIndex) return;
+    io.to(room.code).emit('shot-fired', { angle, power, player: socket.playerIndex });
+  });
+
+  socket.on('shot-complete', ({ pocketedBalls, cueBallPocketed, firstHitBall, ballPositions }) => {
+    const room = rooms[socket.roomCode];
+    if (!room || room.gameType !== '8ball' || !room.state) return;
+    if (room.state.currentPlayer !== socket.playerIndex) return;
+
+    const eb = games['8ball'];
+    const result = eb.processShot(room.state, { pocketedBalls, cueBallPocketed, firstHitBall }, socket.playerIndex);
+    if (!result.valid) return;
+
+    room.state = result.state;
+    io.to(room.code).emit('turn-update', { state: room.state, ballPositions, scores: room.scores });
+
+    if (result.winner !== undefined) {
+      room.scores[result.winner]++;
+      io.to(room.code).emit('game-over', { winner: result.winner, scores: room.scores });
+    }
+  });
+
+  socket.on('place-cue-ball', ({ x, y }) => {
+    const room = rooms[socket.roomCode];
+    if (!room || room.gameType !== '8ball' || !room.state) return;
+    if (room.state.currentPlayer !== socket.playerIndex || !room.state.ballInHand) return;
+    room.state.ballInHand = false;
+    socket.to(room.code).emit('cue-ball-placed', { x, y });
   });
 
   socket.on('rematch', () => {
